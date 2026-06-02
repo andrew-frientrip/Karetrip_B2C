@@ -482,8 +482,8 @@ section.section {
   justify-content: center;
 }
 .card-img.has-image {
-  background-color: #f4f4f5;          /* neutral light background for letterbox */
-  background-size: contain;             /* show the full image, no crop */
+  background-color: #f4f4f5;          /* fallback fill behind any transparent area */
+  background-size: cover;              /* fill the card; crop overflowing axis */
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -1197,21 +1197,22 @@ section.section {
   margin: 0;
 }
 .modal-itinerary li {
-  position: relative;
-  padding: 10px 0 10px 56px;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 14px 0;
   font-size: 0.95rem;
   line-height: 1.55;
   color: var(--color-text);
   border-bottom: 1px dashed var(--color-line);
   counter-increment: dayCounter;
 }
-.modal-itinerary li:last-child { border-bottom: none; }
+.modal-itinerary li:first-child { padding-top: 4px; }
+.modal-itinerary li:last-child  { padding-bottom: 4px; border-bottom: none; }
 .modal-itinerary li::before {
   content: counter(dayCounter);
-  position: absolute;
-  left: 0; top: 50%;
-  transform: translateY(-50%);
-  width: 38px; height: 38px;
+  flex-shrink: 0;
+  width: 40px; height: 40px;
   border-radius: 50%;
   background: var(--color-accent);
   color: #fff;
@@ -1219,7 +1220,7 @@ section.section {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 
 /* Print-friendly fallback for visually hidden */
@@ -1616,49 +1617,60 @@ section.section {
 ========================================= */
 const PRODUCTS = [
   // Tour Packages
-  { id:'pkg1', folder:'01_서울_벚꽃투어_4박5일', cat:'package', img:'tour', icon:'4N5D',
+  { id:'pkg6', folder:'30_삼양_트레일러닝_1박2일', cat:'package', img:'tour', icon:'TRAIL',
     tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
-    title:{zh:'4天5夜 首爾櫻花之旅',en:'4N5D Seoul Cherry Blossom Tour',ar:'4 ليالٍ 5 أيام - جولة أزهار الكرز في سيول',id:'4N5D Tour Bunga Sakura Seoul'},
-    price:{zh:'起價 $1,312 / 人',en:'From $1,312 per person',ar:'ابتداءً من $1,312 / شخص',id:'Mulai $1,312 / orang'},
-    about:{zh:'5星級飯店住宿 + Premium 廂型車接送 + 樂天世界櫻花 + 韓茶體驗 + 景福宮韓服體驗 + 北村陶藝 + 頭皮 SPA + 個人色彩諮詢，雙人共住。',en:'5-star hotel + Premium van + Lotte World Cherry Blossom + Tea Ceremony + Gyeongbok Palace Hanbok + Bukchon Pottery + Scalp Spa + Color Analysis. Twin sharing.',ar:'فندق 5 نجوم + سيارة فان مميزة + أزهار الكرز في لوت وورلد + مراسم الشاي + قصر جيونغبوك مع هانبوك + فخار بوكتشون + سبا فروة الرأس + تحليل الألوان. غرفة مزدوجة.',id:'Hotel 5★ + van premium + Lotte World bunga sakura + upacara teh + Istana Gyeongbok hanbok + tembikar Bukchon + Spa kulit kepala + Analisis warna. Berbagi kamar.'},
-    include:{zh:'住宿、機場接送、所有體驗活動門票、英文司機',en:'Accommodation, airport transfers, all program tickets, English driver',ar:'إقامة، نقل من/إلى المطار، تذاكر جميع البرامج، سائق يتحدث الإنجليزية',id:'Akomodasi, transfer bandara, semua tiket program, sopir Bahasa Inggris'},
-    min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
-    cancel:{zh:'出發前 7 天可取消',en:'7 days prior to departure',ar:'قبل 7 أيام من السفر',id:'7 hari sebelum keberangkatan'},
-    dates:{zh:'2026/03/30 — 04/03',en:'Mar 30 – Apr 3, 2026',ar:'30 مارس – 3 أبريل 2026',id:'30 Mar – 3 Apr 2026'},
+    title:{zh:'三養牧場高原越野跑 1天2夜',en:'Samyang Highland Trail Running 1N2D',ar:'الجري الجبلي في مرتفعات سامبيانغ',id:'Trail Running Dataran Tinggi Samyang 1N2D'},
+    price:{zh:'$390 / 人',en:'$390 per person',ar:'$390 للشخص',id:'$390 per orang'},
+    about:{zh:'位於大關嶺海拔 1100 公尺、東洋最大規模高原牧場的廣闊草原與稜線。日出時分迎著風力發電機與綿羊牛群慢跑，初學者 5 公里、進階者 15 公里路線可選。',en:'Run across the highland meadows at Samyang Ranch — Korea\'s largest highland pasture at 1,100m in Daegwallyeong. Sunrise running amid wind turbines and sheep. Choose 5km beginner or 15km intermediate course.',ar:'الجري عبر مروج المرتفعات في مزرعة سامبيانغ على ارتفاع 1100 متر. شروق الشمس بين توربينات الرياح والأغنام.',id:'Berlari di padang rumput dataran tinggi Peternakan Samyang setinggi 1.100m. Pilih rute 5km atau 15km.'},
+    dates:{zh:'2026/06/27 — 06/28',en:'Jun 27 – 28, 2026',ar:'27 – 28 يونيو 2026',id:'27 – 28 Jun 2026'},
     itinerary:[
-      { zh:'第1天 抵達首爾 → 5星級飯店入住',                          en:'Day 1 Arrive Seoul → 5★ hotel check-in',                                       ar:'اليوم 1 الوصول إلى سيول والإقامة في فندق 5 نجوم',                        id:'Hari 1 Tiba di Seoul → Check-in hotel 5★' },
-      { zh:'第2天 樂天世界塔 & 石村湖櫻花夜遊 + 韓國傳統茶道體驗',     en:'Day 2 Lotte World Tower & Seokchon Lake Cherry Blossom + Korean Tea Ceremony', ar:'اليوم 2 برج لوت وورلد وأزهار الكرز + مراسم الشاي الكورية',                 id:'Hari 2 Lotte World Tower & Sakura Danau Seokchon + Upacara Teh' },
-      { zh:'第3天 景福宮韓服體驗 & 寫真 + 北村韓屋陶藝工房',          en:'Day 3 Gyeongbok Palace Hanbok Tour & Photoshoot + Bukchon Pottery Workshop',  ar:'اليوم 3 جولة قصر جيونغبوك بالهانبوك مع جلسة تصوير + ورشة الفخار',          id:'Hari 3 Tur Hanbok Istana Gyeongbok + Workshop Tembikar Bukchon' },
-      { zh:'第4天 頭皮 SPA 護理 + 個人色彩諮詢 & 私人購物導購',        en:'Day 4 Scalp Spa & Massage + Color Analysis & Personal Shopper',               ar:'اليوم 4 سبا فروة الرأس + تحليل الألوان والمتسوق الشخصي',                   id:'Hari 4 Spa Kulit Kepala + Analisis Warna & Personal Shopper' },
-      { zh:'第5天 退房 → 仁川機場送機',                                en:'Day 5 Check-out → Incheon Airport transfer',                                    ar:'اليوم 5 تسجيل الخروج والنقل إلى مطار إنتشون',                              id:'Hari 5 Check-out → Transfer Bandara Incheon' }
-    ] },
-
-  { id:'pkg2', folder:'02_K-Culture_K-Beauty_투어_4박5일', cat:'package', img:'tour', icon:'K+B',
-    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
-    title:{zh:'4天5夜 首爾 K-Culture & K-Beauty 之旅',en:'4N5D Seoul K-Culture & K-Beauty Tour',ar:'4 ليالٍ 5 أيام - جولة K-Culture و K-Beauty',id:'4N5D Tour K-Culture & K-Beauty Seoul'},
-    price:{zh:'起價 $1,639 / 人',en:'From $1,639 per person',ar:'ابتداءً من $1,639 / شخص',id:'Mulai $1,639 / orang'},
-    about:{zh:'景福宮韓服體驗 + 個人色彩諮詢 + VIP 皮膚護理 + 明洞 Olive Young 美妝採購 + 頭皮 SPA + 專業 K-Beauty 髮型妝容。住 5 星級飯店，Premium 廂型車。',en:'Palace + Hanbok + Color Analysis + VIP Skin Care + Olive Young K-beauty Shopping + Scalp Spa + Pro K-Beauty Hair & Makeup. 5-star hotel, Premium Van.',ar:'القصر + الهانبوك + تحليل الألوان + العناية بالبشرة VIP + التسوق في Olive Young + سبا فروة الرأس + شعر ومكياج احترافي. فندق 5 نجوم.',id:'Istana + Hanbok + Analisis Warna + Perawatan Kulit VIP + Belanja Olive Young + Spa Kulit Kepala + Rambut & Riasan Profesional. Hotel 5★.'},
-    include:{zh:'住宿、機場接送、所有體驗活動門票、英文司機',en:'Accommodation, airport transfers, all program tickets, English driver',ar:'إقامة، نقل من/إلى المطار، تذاكر جميع البرامج، سائق',id:'Akomodasi, transfer bandara, semua tiket, sopir'},
-    min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
-    cancel:{zh:'出發前 7 天可取消',en:'7 days prior to departure',ar:'قبل 7 أيام من السفر',id:'7 hari sebelum keberangkatan'},
-    dates:{zh:'2026/05/18 — 05/22',en:'May 18 – 22, 2026',ar:'18 – 22 مايو 2026',id:'18 – 22 Mei 2026'},
-    itinerary:[
-      { zh:'第1天 抵達首爾 → 5星級飯店入住',                          en:'Day 1 Arrive Seoul → 5★ hotel check-in',                                  ar:'اليوم 1 الوصول إلى سيول والإقامة',                                       id:'Hari 1 Tiba di Seoul → Check-in hotel 5★' },
-  { id:'pkg3', folder:'27_컬러풀진도_4박5일', cat:'package', img:'tour', icon:'JINDO',
-    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
-    title:{zh:'Colorful Jindo 神秘海路 4天5夜',en:'Colorful Jindo: Mystical Sea Road 4N5D',ar:'كولورفول جيندو: طريق البحر السحري 4 ليالٍ 5 أيام',id:'Colorful Jindo: Jalan Laut Misterius 4N5D'},
-    price:{zh:'起價 $1,180 per person',en:'From $1,180 per person',ar:'ابتداءً من $1,180 للشخص',id:'Mulai $1,180 per orang'},
-    about:{zh:'登上韓國西南端的神秘島嶼珍島(Jindo)。每年春季「神秘海路」奇景再現，海水退去500公尺步行道乍現。包含KTX高鐵、珍島犬主題公園、雲林山房文人之家、世房落日觀景台、傳統珍島阿里郎民謠表演。',en:'Visit Jindo, Korea\'s southwestern mystical island. Witness the annual "Mystical Sea Road" — a 500m-long seabed pathway revealed by extreme low tides. Includes KTX, Jindo Dog Theme Park, Unimsanbang artist residence, Sebang Sunset Viewpoint, and traditional Jindo Arirang folk performance.',ar:'زيارة جيندو، الجزيرة السحرية في جنوب غرب كوريا. مشاهدة "طريق البحر السحري" السنوي — ممر بطول 500 متر يظهر عند انحسار المد الشديد. يشمل قطار KTX السريع وحديقة كلاب جيندو وإقامة الفنان أونيم سانبانغ ومنظر غروب سيبانغ.',id:'Kunjungi Jindo, pulau mistis di barat daya Korea. Saksikan "Jalan Laut Misterius" tahunan — jalur dasar laut sepanjang 500m yang muncul saat air surut ekstrem. Termasuk KTX, Jindo Dog Theme Park, Unimsanbang, Sebang Sunset, dan pertunjukan Jindo Arirang.'},
-    dates:{zh:'2026/04/23 — 04/27',en:'Apr 23 – 27, 2026',ar:'23 – 27 أبريل 2026',id:'23 – 27 Apr 2026'},
-    itinerary:[
-      { zh:'第1天 抵達首爾 → 5星級飯店入住',                                en:'Day 1 Arrive Seoul → 5★ hotel check-in',                                          ar:'اليوم 1 الوصول إلى سيول والإقامة',                                  id:'Hari 1 Tiba Seoul → Check-in hotel 5★' },
-      { zh:'第2天 KTX 高鐵前往木浦 → 進入珍島 → 雲林山房文人之家參觀',    en:'Day 2 KTX to Mokpo → Transfer to Jindo → Visit Unimsanbang (artist residence)',  ar:'اليوم 2 قطار KTX إلى موكبو → الانتقال إلى جيندو → زيارة Unimsanbang',  id:'Hari 2 KTX ke Mokpo → Transfer ke Jindo → Kunjungi Unimsanbang' },
-      { zh:'第3天 神秘海路體驗 (退潮時的500公尺海底步道) + 世房落日',     en:'Day 3 Walk the Mystical Sea Road (500m seabed at low tide) + Sebang Sunset',     ar:'اليوم 3 المشي على طريق البحر السحري + غروب سيبانغ',                  id:'Hari 3 Jalan di Laut Misterius + Sunset Sebang' },
-      { zh:'第4天 珍島犬主題公園 + 在地海鮮料理 + 珍島阿里郎演出 → 返首爾', en:'Day 4 Jindo Dog Theme Park + local seafood + Jindo Arirang performance → return Seoul', ar:'اليوم 4 حديقة كلاب جيندو + المأكولات البحرية + أداء أريرانغ → العودة إلى سيول', id:'Hari 4 Jindo Dog Park + seafood + Arirang → balik Seoul' },
-      { zh:'第5天 退房 → 仁川機場送機',                                      en:'Day 5 Check-out → Incheon Airport transfer',                                       ar:'اليوم 5 تسجيل الخروج والنقل إلى مطار إنتشون',                          id:'Hari 5 Check-out → Transfer Bandara Incheon' }
+      { zh:'第1天 09:00 首爾出發 → 12:00 大關嶺三養牧場 → 飯店入住與韓牛山菜午餐', en:'Day 1 09:00 Depart Seoul → 12:00 Samyang Ranch (Daegwallyeong) → Hotel check-in + Korean beef & sanchae lunch', ar:'اليوم 1 الساعة 09:00 مغادرة سيول، الوصول الساعة 12:00 + الفندق والغداء', id:'Hari 1 09:00 Berangkat Seoul → 12:00 Peternakan Samyang + check-in + makan siang' },
+      { zh:'第1天 14:30 賽道勘察健走 + Trail Running 基本姿勢 Clinic',                  en:'Day 1 14:30 Course recce hike + trail running form clinic for beginners',                                  ar:'اليوم 1 14:30 استكشاف المسار + عيادة الجري',                                            id:'Hari 1 14:30 Survei rute + klinik teknik' },
+      { zh:'第1天 18:30 牧場日落觀景台 + 高原韓牛 BBQ 晚餐 + 早睡',                      en:'Day 1 18:30 Ranch sunset deck + Korean beef BBQ dinner + early to bed',                                    ar:'اليوم 1 18:30 منصة الغروب + شواء + النوم مبكرًا',                                       id:'Hari 1 18:30 Deck sunset + BBQ + tidur cepat' },
+      { zh:'第2天 05:00 集合 → 高原日出 + 賽道 START(5公里 或 15公里 選擇)',           en:'Day 2 05:00 Gather → Highland sunrise + race START (choose 5km or 15km)',                                  ar:'اليوم 2 05:00 التجمع + شروق الشمس وبدء السباق',                                          id:'Hari 2 05:00 Berkumpul + sunrise + START' },
+      { zh:'第2天 08:30 完賽證書 + 復原按摩 + 飯店退房',                                 en:'Day 2 08:30 Finisher certificate + recovery massage + hotel check-out',                                    ar:'اليوم 2 08:30 شهادة الانتهاء + تدليك + تسجيل الخروج',                                   id:'Hari 2 08:30 Sertifikat + pijat + check-out' },
+      { zh:'第2天 12:00 大關嶺特產午餐 → 14:00 出發 → 17:00 抵達首爾',                  en:'Day 2 12:00 Daegwallyeong specialty lunch → 14:00 depart → 17:00 arrive Seoul',                            ar:'اليوم 2 12:00 الغداء + الساعة 14:00 العودة + الوصول الساعة 17:00',                       id:'Hari 2 12:00 Makan siang → 14:00 berangkat → 17:00 tiba Seoul' }
     ],
-    include:{zh:'KTX 來回、住宿、Premium 廂型車、英語司機、所有體驗活動門票',en:'KTX round-trip, accommodation, Premium van, English driver, all program tickets',ar:'تذاكر KTX، الإقامة، سيارة فان مميزة، سائق إنجليزي، تذاكر البرامج',id:'KTX pulang pergi, akomodasi, van premium, sopir Bahasa Inggris, tiket program'},
+    include:{zh:'首爾往返交通、1 晚住宿、Trail Running 교練、完賽證書、復原按摩、所有餐食',en:'Round-trip transport, 1-night stay, trail running coach, finisher certificate, post-race massage, all meals',ar:'النقل، إقامة ليلة، مدرب، شهادة، تدليك، جميع الوجبات',id:'Transportasi PP, 1 malam, pelatih, sertifikat, pijat, semua makan'},
+    min:{zh:'4 人',en:'4 people',ar:'4 أشخاص',id:'4 orang'},
+    cancel:{zh:'出發前 7 天可取消',en:'7 days prior to departure',ar:'قبل 7 أيام من السفر',id:'7 hari sebelum keberangkatan'} },
+
+  { id:'pkg7', folder:'31_양양_서핑투어', cat:'package', img:'tour', icon:'SURF',
+    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
+    title:{zh:'襄陽衝浪之旅 1天2夜 / 2天3夜',en:'Yangyang Surf Tour — 1N2D or 2N3D',ar:'جولة ركوب الأمواج في يانغ يانغ',id:'Yangyang Surf Tour — 1N2D atau 2N3D'},
+    price:{zh:'1 天 2 夜 $290 / 2 天 3 夜 $440 (每人)',en:'1N2D $290 / 2N3D $440 per person',ar:'$290 (ليلة) / $440 (ليلتان) للشخص',id:'1N2D $290 / 2N3D $440 per orang'},
+    about:{zh:'韓國東海岸的衝浪聖地襄陽。距首爾高速公路約 2 小時，浪況穩定、海水清澈。在地專業教練指導，1 天 2 夜或 2 天 3 夜任選 — 短期體驗或深度滯留皆可。包含衝浪板、防寒衣、海邊韓式 BBQ。',en:'Yangyang on Korea\'s east coast — the country\'s surfing capital. ~2hr from Seoul, consistent waves, crystal-clear water. Local instructors. Choose 1N2D or 2N3D. Includes board, wetsuit, beachside Korean BBQ.',ar:'يانغ يانغ على الساحل الشرقي — عاصمة ركوب الأمواج. أمواج ثابتة، مدربون محليون. اختر ليلة ويومان أو ليلتان وثلاثة أيام.',id:'Yangyang di pantai timur — ibukota selancar Korea. Ombak konsisten, instruktur lokal. Pilih 1N2D atau 2N3D.'},
+    dates:{zh:'2026/07/04 — 07/05 (可延長至 07/06)',en:'Jul 4 – 5, 2026 (extend to Jul 6 for 2N3D)',ar:'4 – 5 يوليو 2026 (تمديد إلى 6 يوليو للخيار الأطول)',id:'4 – 5 Jul 2026 (perpanjang ke 6 Jul untuk 2N3D)'},
+    itinerary:[
+      { zh:'第1天 09:00 首爾出發 → 12:00 襄陽竹島海邊 → 衝浪旅館入住',                              en:'Day 1 09:00 Depart Seoul → 12:00 Yangyang Jukdo Beach → Surf hostel check-in',                                                            ar:'اليوم 1 09:00 المغادرة → 12:00 شاطئ جوكدو + الإقامة',                                            id:'Hari 1 09:00 Seoul → 12:00 Pantai Jukdo + check-in' },
+      { zh:'第1天 13:00 教練組陸上基礎課程 → 15:00 第一場海上實戰(2 小時)',                          en:'Day 1 13:00 Land-based basics → 15:00 First in-water session (2hr)',                                                                       ar:'اليوم 1 13:00 أساسيات + 15:00 الجلسة الأولى في الماء',                                            id:'Hari 1 13:00 Dasar di darat + 15:00 Sesi pertama di air' },
+      { zh:'第1天 18:30 海邊韓式 BBQ + 篝火(與在地 surfer 文化交流)',                                en:'Day 1 18:30 Beachside Korean BBQ + bonfire with local surfers',                                                                              ar:'اليوم 1 18:30 شواء وحرق على الشاطئ',                                                              id:'Hari 1 18:30 BBQ pantai + api unggun' },
+      { zh:'第2天 05:30 黎明衝浪(風浪最佳時段) → 08:00 海邊咖啡 + 早餐',                            en:'Day 2 05:30 Dawn surf (best wave window) → 08:00 Beach café breakfast',                                                                       ar:'اليوم 2 05:30 الفجر + 08:00 إفطار',                                                                id:'Hari 2 05:30 Selancar fajar + 08:00 Sarapan' },
+      { zh:'第2天 10:30 自由衝浪或海邊散步 → 12:00 退房 → 襄陽傳統市場午餐 → 15:00 回程',           en:'Day 2 10:30 Free surf or coastal walk → 12:00 Check-out → Yangyang traditional market lunch → 15:00 Return',                              ar:'اليوم 2 10:30 ركوب أمواج حر + 12:00 الخروج + الغداء + العودة',                                    id:'Hari 2 10:30 Selancar bebas + 12:00 Check-out + makan siang + pulang' },
+      { zh:'第3天 (2 天 3 夜方案) 自由衝浪整日 + 洛山寺日出 + 海邊瑜伽 → 晚間回首爾',                en:'Day 3 (2N3D option) Full-day free surf + Naksansa Temple sunrise + beach yoga → Evening return',                                          ar:'اليوم 3 (ليلتان) ركوب الأمواج طوال اليوم + معبد ناكسان + اليوغا + العودة',                       id:'Hari 3 (2N3D) Selancar seharian + Kuil Naksansa + yoga + pulang malam' }
+    ],
+    include:{zh:'首爾往返、住宿、衝浪板與防寒衣、英文教練 3 堂、海邊 BBQ',en:'Round-trip transport, accommodation, board & wetsuit, 3 instructor sessions, beachside BBQ',ar:'النقل، الإقامة، لوح وبدلة، 3 دروس، شواء',id:'Transportasi, akomodasi, papan & wetsuit, 3 sesi, BBQ pantai'},
     min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
+    cancel:{zh:'出發前 5 天可取消',en:'5 days prior to departure',ar:'قبل 5 أيام من السفر',id:'5 hari sebelum keberangkatan'} },
+
+  { id:'pkg8', folder:'32_부산_그룹투어_2박3일', cat:'package', img:'tour', icon:'BUSAN',
+    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
+    title:{zh:'釜山熱點團體遊 2 天 3 夜',en:'Busan Hot Spots Group Tour 2N3D',ar:'جولة بوسان الجماعية - ليلتان وثلاثة أيام',id:'Tur Grup Hot Spots Busan 2N3D'},
+    price:{zh:'$640 / 人',en:'$640 per person',ar:'$640 للشخص',id:'$640 per orang'},
+    about:{zh:'韓國第二大城釜山的最潮流海濱與彩色村，深度卻不擁擠的小團遊。海雲台 5 星級飯店為據點，自由活動時間充裕。包含彩色文化村、自갈치市場、廣安里大橋夜景、海邊韓式 BBQ。',en:'A small-group deep dive into Korea\'s second city — its trendiest beaches and color villages, with plenty of free time. Anchored at a 5★ hotel in Haeundae. Includes Gamcheon & Huinnyeoul Color Village, Jagalchi Market, Gwangan Bridge night view, beachside Korean BBQ.',ar:'تعمق جماعي في ثاني أكبر مدن كوريا. فندق 5 نجوم في هايون داي. قرى الألوان، السوق، الجسر.',id:'Penjelajahan grup kecil ke kota kedua Korea. Hotel 5★ Haeundae. Desa warna, pasar, jembatan.'},
+    dates:{zh:'2026/07/18 — 07/20',en:'Jul 18 – 20, 2026',ar:'18 – 20 يوليو 2026',id:'18 – 20 Jul 2026'},
+    itinerary:[
+      { zh:'第1天 08:30 首爾站 KTX → 11:30 釜山站 → 海雲台 5★ 飯店入住 + 牛骨湯午餐',                                 en:'Day 1 08:30 KTX from Seoul → 11:30 Busan Station → Haeundae 5★ hotel + Korean gomtang lunch',                                              ar:'اليوم 1 KTX من سيول + الفندق + الغداء',                                                              id:'Hari 1 KTX Seoul → Busan → Hotel + makan siang' },
+      { zh:'第1天 14:00 海雲台自由海水浴 + 海邊散步(2 小時) → 17:00 廣安里大橋鑽石步道',                              en:'Day 1 14:00 Free beach time at Haeundae + coastal walk → 17:00 Gwangalli Diamond Bridge boardwalk',                                       ar:'اليوم 1 شاطئ هايون داي الحر + جسر جوانجان',                                                          id:'Hari 1 Pantai Haeundae + Jembatan Gwangalli' },
+      { zh:'第1天 19:00 廣安里海邊韓式 BBQ + 大橋燈光秀觀賞',                                                              en:'Day 1 19:00 Gwangalli beachside Korean BBQ + bridge light show',                                                                              ar:'اليوم 1 شواء على شاطئ جوانجان + عرض الأضواء',                                                       id:'Hari 1 BBQ pantai + light show jembatan' },
+      { zh:'第2天 09:30 飯店自由早餐 → 10:30 甘川文化村(導遊同行，彩色梯田村莊)',                                       en:'Day 2 09:30 Hotel breakfast → 10:30 Gamcheon Culture Village (guided, terraced color village)',                                                ar:'اليوم 2 إفطار + قرية جامتشون',                                                                          id:'Hari 2 Sarapan + Desa Gamcheon' },
+      { zh:'第2天 13:00 自갈치水產市場自由午餐(海鮮 + 生魚片)',                                                            en:'Day 2 13:00 Jagalchi Seafood Market — free lunch (raw fish, market food)',                                                                       ar:'اليوم 2 13:00 سوق جاجالتشي - غداء حر',                                                                id:'Hari 2 13:00 Pasar Jagalchi - makan siang bebas' },
+      { zh:'第2天 15:30 影島白雪文化村(海邊壁畫巷) → 18:00 西面咖啡街自由 → 21:00 廣安里夜景',                          en:'Day 2 15:30 Huinnyeoul Culture Village (seaside mural alley) → 18:00 Seomyeon café street → 21:00 Gwangalli night view',                       ar:'اليوم 2 هينيول + سيومون + إطلالة ليلية',                                                              id:'Hari 2 Huinnyeoul + Seomyeon + view malam' },
+      { zh:'第3天 10:00 晚起早餐 → 11:00 海雲台 The Bay 101 咖啡 自由時間 → 13:30 釜山魚市場生魚片午餐',                en:'Day 3 10:00 Late breakfast → 11:00 The Bay 101 café + free time → 13:30 Busan Fish Market raw-fish lunch',                                  ar:'اليوم 3 إفطار + الخليج 101 + غداء سمك',                                                                id:'Hari 3 Sarapan + The Bay 101 + makan siang ikan' },
+      { zh:'第3天 15:00 釜山站 KTX → 17:30 抵達首爾',                                                                       en:'Day 3 15:00 KTX from Busan → 17:30 Arrive Seoul',                                                                                                ar:'اليوم 3 KTX إلى سيول',                                                                                  id:'Hari 3 KTX Busan → Seoul' }
+    ],
+    include:{zh:'KTX 來回、海雲台 5★ 飯店 2 晚、村莊導遊、廣安里 BBQ、所有交通',en:'Round-trip KTX, 2 nights at Haeundae 5★, guided village tours, Gwangalli BBQ, all transport',ar:'KTX، فندق 5 نجوم ليلتان، جولات القرى، شواء، النقل',id:'KTX, hotel 5★ 2 malam, tur desa, BBQ, transportasi'},
+    min:{zh:'6 人 (團體遊)',en:'6 people (group tour)',ar:'6 أشخاص (جماعية)',id:'6 orang (grup)'},
     cancel:{zh:'出發前 14 天可取消',en:'14 days prior to departure',ar:'قبل 14 يومًا من السفر',id:'14 hari sebelum keberangkatan'} },
 
   { id:'pkg4', folder:'28_무주_반딧불이_축제_3박4일', cat:'package', img:'tour', icon:'MUJU',
@@ -1674,6 +1686,45 @@ const PRODUCTS = [
       { zh:'第4天 安國寺森林步道散策 → 返首爾 → 仁川機場送機',               en:'Day 4 Anguk-sa Temple forest walk → return to Seoul → Incheon Airport transfer',  ar:'اليوم 4 المشي في غابة معبد أنغوك → العودة إلى سيول → النقل إلى المطار',                id:'Hari 4 Jalan hutan Anguk-sa → balik Seoul → bandara' }
     ],
     include:{zh:'住宿、Premium 廂型車、英語司機、所有體驗活動門票、纜車券',en:'Accommodation, Premium van, English driver, all program tickets, cable car pass',ar:'الإقامة، سيارة فان مميزة، سائق، تذاكر التلفريك',id:'Akomodasi, van premium, sopir, tiket kereta gantung'},
+    min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
+    cancel:{zh:'出發前 14 天可取消',en:'14 days prior to departure',ar:'قبل 14 يومًا من السفر',id:'14 hari sebelum keberangkatan'} },
+
+  { id:'pkg9', folder:'33_강릉_컬러헌팅_세인트존스', cat:'package', img:'tour', icon:'COLOR',
+    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
+    title:{zh:'江陵 Color Hunting × St. Johns 飯店 1 天 2 夜',en:'Gangneung Color Hunting × St. Johns 1N2D',ar:'صيد الألوان في جانغنونغ × سانت جونز',id:'Gangneung Color Hunting × St. Johns 1N2D'},
+    price:{zh:'$520 / 人',en:'$520 per person',ar:'$520 للشخص',id:'$520 per orang'},
+    about:{zh:'入住江陵海邊 5★ St. Johns 飯店，進行攝影主題之旅。每日由主持人指定一個「今日的色彩」，參與者沿著安木咖啡街、鏡浦海邊、正東津漁港等地點獵取符合該色彩的鏡頭。最後舉行 mini 照片展與最佳鏡頭頒獎。',en:'Stay at the 5★ St. Johns Hotel Gangneung and embark on a photography-themed trip. Each day the host announces a "Color of the Day" — participants roam Anmok Coffee Street, Gyeongpo Beach and Jeongdongjin Harbor capturing matching shots. Ends with a mini exhibition and best-shot awards.',ar:'الإقامة في فندق سانت جونز ورحلة تصوير. كل يوم لون محدد ومعرض صور صغير في النهاية.',id:'Menginap di Hotel St. Johns untuk perjalanan tema foto. Tiap hari ada "Warna Hari Ini" dan mini pameran di akhir.'},
+    dates:{zh:'2026/09/12 — 09/13',en:'Sep 12 – 13, 2026',ar:'12 – 13 سبتمبر 2026',id:'12 – 13 Sep 2026'},
+    itinerary:[
+      { zh:'第1天 08:30 首爾站 KTX → 10:30 江陵站 → St. Johns 飯店入住',                                                en:'Day 1 08:30 KTX from Seoul → 10:30 Gangneung Station → St. Johns Hotel check-in',                                                                ar:'اليوم 1 KTX سيول → جانغنونغ + الفندق',                                                                  id:'Hari 1 KTX Seoul → Gangneung + Hotel' },
+      { zh:'第1天 11:30 開幕 Color Briefing — "今日色彩" 公布 + 攝影理論短講',                                          en:'Day 1 11:30 Opening Color Briefing — "Color of the Day" announced + photography tips',                                                          ar:'اليوم 1 11:30 إعلان لون اليوم + إحاطة التصوير',                                                          id:'Hari 1 11:30 Briefing warna + tips foto' },
+      { zh:'第1天 13:00 第一場色彩獵取 — 安木咖啡街 + 鏡浦海邊(4 小時)',                                                en:'Day 1 13:00 First color hunt — Anmok Coffee Street + Gyeongpo Beach (4hr)',                                                                       ar:'اليوم 1 13:00 الصيد الأول — شارع أنموك وشاطئ جيونغبو',                                                  id:'Hari 1 13:00 Berburu warna pertama — Anmok + Gyeongpo' },
+      { zh:'第1天 18:30 飯店海景餐廳晚餐 + 當日鏡頭 Color Review',                                                        en:'Day 1 18:30 Hotel ocean-view dinner + Color Review of today\'s shots',                                                                              ar:'اليوم 1 18:30 العشاء + مراجعة الصور',                                                                    id:'Hari 1 18:30 Makan malam laut + Color Review' },
+      { zh:'第2天 06:30 正東津日出觀景 + 第二色彩公布',                                                                      en:'Day 2 06:30 Jeongdongjin sunrise + second Color reveal',                                                                                          ar:'اليوم 2 06:30 شروق جيونغ دونغ جين + اللون الثاني',                                                       id:'Hari 2 06:30 Sunrise Jeongdongjin + warna kedua' },
+      { zh:'第2天 08:30 飯店早餐 → 第二場色彩獵取 — 注文津漁港 + 沙天津海邊(4 小時)',                                   en:'Day 2 08:30 Hotel breakfast → Second hunt — Jumunjin Harbor + Sacheonjin Beach (4hr)',                                                            ar:'اليوم 2 إفطار + الصيد الثاني',                                                                            id:'Hari 2 Sarapan + Berburu kedua' },
+      { zh:'第2天 14:00 飯店 mini 攝影展設置 → 15:00 觀展 + Best Shot 頒獎 + 印製紀念冊',                                  en:'Day 2 14:00 Hotel mini photo exhibition setup → 15:00 Viewing + Best Shot awards + printed keepsake',                                            ar:'اليوم 2 معرض الصور والجوائز',                                                                            id:'Hari 2 Mini pameran + penghargaan' },
+      { zh:'第2天 17:00 江陵站 KTX → 19:00 抵達首爾',                                                                          en:'Day 2 17:00 KTX from Gangneung → 19:00 Arrive Seoul',                                                                                              ar:'اليوم 2 KTX إلى سيول',                                                                                    id:'Hari 2 KTX → Seoul' }
+    ],
+    include:{zh:'KTX 來回、St. Johns Hotel 1 晚海景客房、攝影主持人指導、色彩 Briefing Book、印製照片冊',en:'Round-trip KTX, 1 night St. Johns Hotel ocean-view room, photo host guidance, color briefing book, printed keepsake',ar:'KTX، إقامة ليلة، مرشد التصوير، دفتر الألوان، كتيب الصور',id:'KTX, hotel 1 malam, panduan foto, buku warna, cetakan'},
+    min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
+    cancel:{zh:'出發前 7 天可取消',en:'7 days prior to departure',ar:'قبل 7 أيام من السفر',id:'7 hari sebelum keberangkatan'} },
+
+  { id:'pkg10', folder:'34_자라섬_재즈페스티벌', cat:'package', img:'tour', icon:'JAZZ',
+    tag:{zh:'套裝行程',en:'PACKAGE',ar:'باقة',id:'PAKET'},
+    title:{zh:'加平 自鯊島國際爵士節 1/2/3 夜',en:'Jaraseom Int\'l Jazz Festival 1N / 2N / 3N',ar:'مهرجان جاراسيوم الدولي للجاز',id:'Festival Jazz Internasional Jaraseom 1N/2N/3N'},
+    price:{zh:'1 夜 $410 / 2 夜 $720 / 3 夜 $980 (每人)',en:'1N $410 / 2N $720 / 3N $980 per person',ar:'$410 / $720 / $980 للشخص',id:'1N $410 / 2N $720 / 3N $980 per orang'},
+    about:{zh:'每年 10 月初在京畿道加平自鯊島舉行的韓國最大國際爵士樂節。全球頂級爵士樂手現場演出、河畔露營氛圍、秋日楓葉絕景三合一。依入住天數選擇 1 / 2 / 3 夜方案。',en:'Held annually in early October on Jaraseom Island in Gapyeong — Korea\'s biggest international jazz festival. Top global jazz acts, riverside camping vibes, peak autumn maples — all in one weekend. Choose 1, 2, or 3 nights.',ar:'يقام سنويًا في أوائل أكتوبر في جزيرة جاراسيوم. عروض عالمية، أجواء التخييم، أوراق الخريف.',id:'Setiap awal Oktober di Pulau Jaraseom — festival jazz internasional terbesar Korea. Aksi global, suasana camping, maple gugur.'},
+    dates:{zh:'2026/10/02 — 10/04',en:'Oct 2 – 4, 2026',ar:'2 – 4 أكتوبر 2026',id:'2 – 4 Okt 2026'},
+    itinerary:[
+      { zh:'第1天 14:00 首爾出發 → 加平自鯊島(1.5 小時) → 飯店入住',                                                  en:'Day 1 14:00 Depart Seoul → Gapyeong Jaraseom (1.5hr) → Hotel check-in',                                                                          ar:'اليوم 1 المغادرة → جاراسيوم + الفندق',                                                                  id:'Hari 1 Seoul → Jaraseom + Hotel' },
+      { zh:'第1天 17:00 自鯊島進場 → 主舞台首日開場演出 + Food Truck 晚餐 + 加平酒莊區攤位',                          en:'Day 1 17:00 Enter Jaraseom → Main Stage opening night + food truck dinner + Gapyeong winery booths',                                            ar:'اليوم 1 17:00 الدخول + المسرح + شاحنات الطعام',                                                          id:'Hari 1 17:00 Masuk + Main Stage + food truck' },
+      { zh:'第2天 10:00 自由早晨 → 11:00 加平栗子村咖啡街散步 → 14:00 進場 → 整日多舞台演出',                          en:'Day 2 10:00 Slow morning → 11:00 Gapyeong Chestnut Village café walk → 14:00 Enter venue → All-day multi-stage performances',                  ar:'اليوم 2 صباح بطيء + قرية الكستناء + عروض طوال اليوم',                                                  id:'Hari 2 Pagi santai + Desa Berangan + multi-stage' },
+      { zh:'第2天 19:30 主舞台明星演出 + 河邊 acoustic 篝火 jam session',                                                en:'Day 2 19:30 Main Stage headliners + riverside acoustic bonfire jam',                                                                              ar:'اليوم 2 19:30 نجوم المسرح + جلسة جام',                                                                  id:'Hari 2 19:30 Headliner + jam akustik' },
+      { zh:'第3天 09:00 河景早午餐 → 10:00 南怡島 30 分鐘短訪(楓葉景點)',                                              en:'Day 3 09:00 Riverview brunch → 10:00 Quick 30-min visit to Nami Island (autumn foliage)',                                                       ar:'اليوم 3 إفطار + جزيرة نامي',                                                                              id:'Hari 3 Brunch + Pulau Nami' },
+      { zh:'第3天 13:00 自鯊島最終日 acoustic 舞台 + 17:30 閉幕演出',                                                    en:'Day 3 13:00 Jaraseom acoustic stage + 17:30 Closing performance',                                                                                ar:'اليوم 3 المرحلة الصوتية + الختام',                                                                       id:'Hari 3 Stage akustik + closing' },
+      { zh:'第4天 (3 夜方案) 09:30 退房 → 清平湖咖啡街 自由時間 → 14:00 出發 → 16:00 抵達首爾',                          en:'Day 4 (3N option) 09:30 Check-out → Cheongpyeong Lake café free time → 14:00 Depart → 16:00 Arrive Seoul',                                      ar:'اليوم 4 (3 ليالٍ) الخروج + بحيرة تشيونغبيونغ + العودة',                                                  id:'Hari 4 (3N) Check-out + Danau Cheongpyeong + pulang' }
+    ],
+    include:{zh:'首爾往返、住宿(依方案)、3 日 Festival 入場券、主舞台指定席、加平酒莊體驗券',en:'Round-trip transport, accommodation by plan, 3-day festival pass, Main Stage reserved seat, Gapyeong winery voucher',ar:'النقل، الإقامة، تذكرة 3 أيام، مقعد محجوز، قسيمة',id:'Transportasi, akomodasi, tiket 3 hari, kursi reserved, voucher'},
     min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
     cancel:{zh:'出發前 14 天可取消',en:'14 days prior to departure',ar:'قبل 14 يومًا من السفر',id:'14 hari sebelum keberangkatan'} },
 
@@ -1693,11 +1744,6 @@ const PRODUCTS = [
     include:{zh:'KTX 來回、住宿、Premium 廂型車、英語司機、所有體驗活動門票',en:'KTX round-trip, accommodation, Premium van, English driver, all program tickets',ar:'تذاكر KTX، الإقامة، سيارة فان، سائق، تذاكر البرامج',id:'KTX pulang pergi, akomodasi, van premium, sopir, tiket program'},
     min:{zh:'2 人',en:'2 people',ar:'شخصان',id:'2 orang'},
     cancel:{zh:'出發前 14 天可取消',en:'14 days prior to departure',ar:'قبل 14 يومًا من السفر',id:'14 hari sebelum keberangkatan'} },
-      { zh:'第2天 景福宮韓服體驗 & 寫真 + 個人色彩諮詢',                en:'Day 2 Gyeongbok Palace Hanbok Tour + Color Analysis',                      ar:'اليوم 2 قصر جيونغبوك بالهانبوك + تحليل الألوان',                          id:'Hari 2 Istana Gyeongbok Hanbok + Analisis Warna' },
-      { zh:'第3天 VIP 皮膚護理療程 + 明洞 Olive Young 美妝採購',        en:'Day 3 VIP Skin Care Treatment + Olive Young K-Beauty Shopping',           ar:'اليوم 3 علاج العناية بالبشرة + التسوق في Olive Young',                     id:'Hari 3 Perawatan Kulit VIP + Belanja Olive Young' },
-      { zh:'第4天 頭皮 SPA 護理 + 專業 K-Beauty 髮型 & 妝容',          en:'Day 4 Scalp Spa & Massage + Pro K-Beauty Hair & Makeup Session',          ar:'اليوم 4 سبا فروة الرأس + جلسة شعر ومكياج احترافية',                       id:'Hari 4 Spa Kulit Kepala + Sesi Rambut & Riasan Pro' },
-      { zh:'第5天 退房 → 仁川機場送機',                                en:'Day 5 Check-out → Incheon Airport transfer',                              ar:'اليوم 5 تسجيل الخروج والنقل إلى المطار',                                  id:'Hari 5 Check-out → Transfer Bandara' }
-    ] },
 
   // K-Beauty & Medical
   { id:'bm1', folder:'03_퍼스널컬러_진단_쇼퍼', cat:'kbeauty', img:'kbeauty', icon:'CA',
